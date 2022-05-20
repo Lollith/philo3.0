@@ -6,7 +6,7 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/17 11:43:41 by agouet            #+#    #+#             */
-/*   Updated: 2022/05/19 10:11:21 by agouet           ###   ########.fr       */
+/*   Updated: 2022/05/20 16:44:28 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 t_philo	*ft_lstnew(int content, t_rules *rules)
 {
 	t_philo	*new_elem;
-	int		i;
 	int		size_mutex;
 
 	size_mutex = sizeof (pthread_mutex_t);
@@ -24,17 +23,9 @@ t_philo	*ft_lstnew(int content, t_rules *rules)
 		return (NULL);
 	new_elem->num = (int) content;
 	new_elem->nb_meal = rules->nb_t_must_eat;
-	new_elem->state = (int *) ft_calloc (5, sizeof (int));
-	new_elem->m_state = (pthread_mutex_t *) ft_calloc(5, size_mutex);
-	if (!new_elem->m_state || !new_elem->state)
+	new_elem->begin_eat = 0;
+	if (pthread_mutex_init(&new_elem->m_state, NULL))
 		return (NULL);
-	i = 0;
-	while (i < 5)
-	{
-		if (pthread_mutex_init(&new_elem->m_state[i], NULL))
-			return (NULL);
-		i++;
-	}	
 	new_elem->next = NULL;
 	return (new_elem);
 }
@@ -72,8 +63,6 @@ void	ft_lstclear(t_philo **lst)
 		while (*lst)
 		{
 			tmp = (*lst)->next;
-			free((*lst)->state);
-			free((*lst)->m_state);
 			free(*lst);
 			*lst = tmp;
 		}

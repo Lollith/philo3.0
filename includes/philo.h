@@ -6,7 +6,7 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/17 11:59:26 by agouet            #+#    #+#             */
-/*   Updated: 2022/05/19 11:45:00 by agouet           ###   ########.fr       */
+/*   Updated: 2022/05/20 17:25:59 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@ typedef struct s_philo
 {
 	int				num;
 	int				nb_meal;
-	int				*state;
-	pthread_mutex_t	*m_state;
+	long			begin_eat;
+	pthread_mutex_t	m_state;
 	t_rules			*rules;
 	struct s_philo	*next;
 }					t_philo;
@@ -77,33 +77,36 @@ void		ft_lstclear(t_philo **lst);
 /*----------------------------------------------------------------------------*/
 /*									THREAD									  */
 /*----------------------------------------------------------------------------*/
-int		check_fork_eat(int *pt_left, int *pt_right,int *pt_num, t_philo *philo);	
+int			check_fork_eat(int *left, int *right, int *pt_num, t_philo *p);	
 void		*routine_philo(void *arg);
 void		*reaper(void *arg);
-int			check_t_die(t_philo *temp,t_philo *philo);
+int			check_t_die(t_philo *temp, t_philo *philo);
 int			check_die_meal(t_philo *philo);
 
 /*----------------------------------------------------------------------------*/
 /*									STATES									  */
 /*----------------------------------------------------------------------------*/
-int		taking_fork(int *pt_num, t_rules *rules, t_philo *philo);
-int		eating( int *pt_num, t_rules *rules, t_philo *philo);
-int		sleeping(int *pt_num, t_rules *rules, t_philo *philo);
-int		thinking(int *pt_num, t_rules *rules, t_philo *philo);
+int			taking_fork(int *pt_num, t_rules *rules, t_philo *philo);
+int			eating( int *pt_num, t_rules *rules, t_philo *philo);
+int			sleeping(int *pt_num, t_rules *rules, t_philo *philo);
+int			thinking(int *pt_num, t_rules *rules, t_philo *philo);
 void		dying(int *pt_num, t_rules *rules, t_philo *philo);
 
 /*----------------------------------------------------------------------------*/
 /*									TIME									  */
 /*----------------------------------------------------------------------------*/
 long int	get_time(void);
-int			lck_ulck (pthread_mutex_t m_one_die, int philo_rules_one_die);
+int			lck_ulck(pthread_mutex_t m_one_die, int philo_rules_one_die);
 void		one_philo(int *pt_num, t_philo *philo);
 int			create_thread_p(t_rules *rules, t_philo *philo);
+void		ft_wait_thread( t_rules *rules, pthread_t *id);
 
 /*----------------------------------------------------------------------------*/
 /*									ERRORS									  */
 /*----------------------------------------------------------------------------*/
 int			msg_perror(char *origin);
 int			msg_error(char *error);
+void		ft_free(t_rules rules);
+void		ft_nb_meal(t_philo *philo);
 
 #endif

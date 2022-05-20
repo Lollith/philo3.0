@@ -6,7 +6,7 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/13 13:33:09 by agouet            #+#    #+#             */
-/*   Updated: 2022/05/19 10:32:03 by agouet           ###   ########.fr       */
+/*   Updated: 2022/05/20 16:57:30 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,9 @@ int	initiate(t_rules *rules)
 	siz_m_fork = sizeof (pthread_mutex_t);
 	rules->one_die = 0;
 	rules->fork = (int *) ft_calloc (rules->nb_philo, sizeof (int));
-	
-	
-	rules->all_eat = rules->nb_philo;
 	rules->th_id = (pthread_t *) ft_calloc(rules->nb_philo, sizeof (pthread_t));
 	rules->m_fork = (pthread_mutex_t *) ft_calloc(rules->nb_philo, siz_m_fork);
-	if (!rules->m_fork || !rules->th_id)
+	if (!rules->m_fork || !rules->th_id || !rules->fork)
 		return (msg_error("malloc"));
 	i = 0;
 	while (i < rules->nb_philo)
@@ -39,6 +36,8 @@ int	initiate(t_rules *rules)
 	if (pthread_mutex_init(&rules->m_one_die, NULL))
 		return (msg_error("mutex_init"));
 	rules->time_ini = get_time();
+	if (rules->nb_philo == 0)
+		return (FAILURE);
 	return (SUCCESS);
 }
 
@@ -69,6 +68,7 @@ int	ft_check_digit( int ac, char **av)
 void	ft_input(t_rules *rules, char **argv)
 {
 	rules->nb_philo = ft_atoi(argv[1]);
+	rules->all_eat = rules->nb_philo;//////
 	rules->t_eat = ft_atoi(argv[3]);
 	rules->t_sleep = ft_atoi(argv[4]);
 	rules->t_die = ft_atoi(argv[2]);
@@ -90,16 +90,12 @@ void	finisher(t_philo *philo)
 		pthread_mutex_destroy(&philo->rules->m_fork[i]);
 		i++;
 	}
-	i = 0;
-	while (i < 3)
-	{
-		pthread_mutex_destroy(&philo->m_state[i]);
-		i++;
-	}
+	pthread_mutex_destroy(&philo->m_state);
 	pthread_mutex_destroy(&philo->rules->m_display);
 	pthread_mutex_destroy(&philo->rules->m_one_die);
 	free(philo->rules->th_id);
 	free(philo->rules->m_fork);
+	free(philo->rules->fork);
 	ft_lstclear(&philo);
 	printf("Fin!\n");
 }
@@ -119,21 +115,19 @@ int	main(int argc, char **argv)
 		return (1);
 	if (!initiate(&rules))
 	{
-		free(rules.th_id);
-		free(rules.m_fork);
+		ft_free(rules);
 		return (1);
 	}
 	if (!list_philo(&rules, &philo))
 	{
-		free(rules.th_id);
-		free(rules.m_fork);
+		ft_free(rules);
 		ft_lstclear(&philo);
 		return (1);
 	}
-	if(!create_thread_p(&rules, philo))
+	if (!create_thread_p(&rules, philo))
 	{
 		finisher(philo);
-		return(1);
+		return (1);
 	}
 	finisher(philo);
 	return (0);
