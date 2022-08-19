@@ -118,8 +118,8 @@ void	*routine_philo(void *arg)
 //	pthread_mutex_lock(&philo->rules->m_one_die);
 	one_die = philo->rules->one_die;
 //	pthread_mutex_unlock(&philo->rules->m_one_die);
-	if (num % 2 == 0)
-		usleep(philo->rules->t_eat * 1000);
+	if (num  == 0)
+		usleep(philo->rules->t_eat * 2000);
 	while (!one_die && philo->rules->all_eat != 0)
 	{
 		if(check_fork_eat(&left, &right, &num, philo) == 0)

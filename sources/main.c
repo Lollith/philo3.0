@@ -81,9 +81,9 @@ void	ft_input(t_rules *rules, char **argv)
 void	finisher(t_philo *philo)
 {
 	int		i;
-	t_philo	*temp;
+	//t_philo	*temp;
 
-	temp = philo;
+//	temp = philo;
 	i = 0;
 	while (i < philo->rules->nb_philo)
 	{
