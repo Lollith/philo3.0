@@ -44,6 +44,7 @@ typedef struct s_philo
 	int				num;
 	int				nb_meal;
 	long			begin_eat;
+	long			t_take_fork;
 	pthread_mutex_t	m_state;
 	t_rules			*rules;
 	struct s_philo	*next;

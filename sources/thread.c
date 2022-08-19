@@ -32,6 +32,8 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 
 	while (!one_die && all_eat != 0)
 	{
+		while(philo->t_take_fork > 1 && get_time() - philo->rules->time_ini < 2 * philo->rules->t_eat + 10 + philo->t_take_fork)
+			usleep (50);
 		if (left < right)
 		{
 			pthread_mutex_lock(&philo->rules->m_fork[left]);
@@ -100,6 +102,7 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 			pthread_mutex_unlock(&philo->rules->m_fork[right]);
 			return(SUCCESS);
 	}
+		
 	return (FAILURE);
 }
 
@@ -114,16 +117,19 @@ void	*routine_philo(void *arg)
 	philo = (t_philo *)arg;
 	num = philo->num;
 	left = num;
+	philo->t_take_fork = 0;
 	right = (left + 1) % philo->rules->nb_philo;
 //	pthread_mutex_lock(&philo->rules->m_one_die);
 	one_die = philo->rules->one_die;
 //	pthread_mutex_unlock(&philo->rules->m_one_die);
-	if (num  == 0)
-		usleep(philo->rules->t_eat * 2000);
+	if (num % 2 == 0)
+		usleep(philo->rules->t_eat * 1000);
 	while (!one_die && philo->rules->all_eat != 0)
 	{
+	
 		if(check_fork_eat(&left, &right, &num, philo) == 0)
 			return (NULL);
+
 		if(sleeping(&num, philo->rules, philo) == 0)
 			return (NULL);
 		if(thinking(&num, philo->rules, philo) == 0)

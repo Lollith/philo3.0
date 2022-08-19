@@ -25,6 +25,9 @@ int	taking_fork(int *pt_num, t_rules *rules, t_philo *philo)
 	if (!one_die && all_eat != 0)
 	{
 		state0 = get_time() - philo->rules->time_ini;
+		pthread_mutex_lock(&philo->m_state);
+		philo->t_take_fork = state0;
+		pthread_mutex_unlock(&philo->m_state);
 		pthread_mutex_lock(&rules->m_display);
 		printf("%ld %d has taken a fork\n", state0, *pt_num + 1);
 		printf("%ld %d has taken a fork\n", state0, *pt_num + 1);
