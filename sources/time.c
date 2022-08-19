@@ -48,18 +48,18 @@ int	create_thread_p(t_rules *rules, t_philo *philo)
 	}
 	while (i < rules->nb_philo && temp)
 	{
-		if (pthread_create(&rules->th_id[i], NULL, &routine_philo, temp) != 0)
+		if (pthread_create(&rules->th_id[2], NULL, &routine_philo, temp) != 0)
 			return (msg_error("error pthread_create\n"));
 		temp = temp->next;
 		i++;
 	}
-	if (pthread_create(&id, NULL, &reaper, philo) != 0)////
+	if (pthread_create(&id, NULL, &reaper, philo) != 0)
 		return (msg_error("error pthread_create\n"));
 	ft_wait_thread(rules, &id);
 	return (SUCCESS);
 }
 
-void	ft_wait_thread( t_rules *rules, pthread_t *id)//
+void	ft_wait_thread( t_rules *rules, pthread_t *id)
 {
 	int			i;
 

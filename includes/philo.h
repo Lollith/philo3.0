@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
+/*   By: lollith <lollith@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/17 11:59:26 by agouet            #+#    #+#             */
-/*   Updated: 2022/05/20 17:25:59 by agouet           ###   ########.fr       */
+/*   Updated: 2022/08/19 22:48:09 by lollith          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ typedef struct s_philo
 /*									MAIN									  */
 /*----------------------------------------------------------------------------*/
 int			initiate(t_rules *rules);
-void		finisher(t_philo *philo);
+int			finisher(t_philo *philo);
 int			ft_check_digit( int ac, char **av);
 void		ft_input(t_rules *rules, char **argv);
 
@@ -75,13 +75,20 @@ t_philo		*ft_lstnew(int content, t_rules *rules);
 t_philo		*ft_lstlast(t_philo *lst);
 void		ft_lstadd_back(t_philo **alst, t_philo *new);
 void		ft_lstclear(t_philo **lst);
+
 /*----------------------------------------------------------------------------*/
 /*									THREAD									  */
 /*----------------------------------------------------------------------------*/
 int			check_fork_eat(int *left, int *right, int *pt_num, t_philo *p);	
 void		*routine_philo(void *arg);
-void		*reaper(void *arg);
 int			check_t_die(t_philo *temp, t_philo *philo);
+
+int			ready_to_eat(t_philo *philo, int left, int right, int num);
+/*----------------------------------------------------------------------------*/
+/*									REAPER									  */
+/*----------------------------------------------------------------------------*/
+void		check_t_to_die(t_philo *temp);
+void		*reaper(void *arg);
 int			check_die_meal(t_philo *philo);
 
 /*----------------------------------------------------------------------------*/
@@ -107,7 +114,7 @@ void		ft_wait_thread( t_rules *rules, pthread_t *id);
 /*----------------------------------------------------------------------------*/
 int			msg_perror(char *origin);
 int			msg_error(char *error);
-void		ft_free(t_rules rules);
+int			ft_free(t_rules rules);
 void		ft_nb_meal(t_philo *philo);
 
 #endif

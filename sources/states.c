@@ -45,7 +45,7 @@ int	eating(int *pt_num, t_rules *rules, t_philo *philo)
 	pthread_mutex_lock(&philo->rules->m_one_die);
 	one_die = philo->rules->one_die;
 	pthread_mutex_unlock(&philo->rules->m_one_die);
-	if (!one_die && philo->rules->all_eat != 0) //
+	if (!one_die && philo->rules->all_eat != 0)
 	{
 		state1 = get_time() - philo->rules->time_ini;
 		pthread_mutex_lock(&philo->m_state);
@@ -54,7 +54,7 @@ int	eating(int *pt_num, t_rules *rules, t_philo *philo)
 		pthread_mutex_lock(&rules->m_display);
 		printf("%ld %d is eating\n", state1, *pt_num + 1);
 		pthread_mutex_unlock(&rules->m_display);
-		ft_nb_meal(philo); //
+		ft_nb_meal(philo);
 		usleep(rules->t_eat * 1000);
 		return (SUCCESS);
 	}

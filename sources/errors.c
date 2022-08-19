@@ -24,21 +24,21 @@ int	msg_perror(char *origin)
 	exit (EXIT_FAILURE);
 }
 
-void ft_free(t_rules rules)
+int	ft_free(t_rules rules)
 {
-		free(rules.th_id);
-		free(rules.m_fork);
-		free(rules.fork);
+	free(rules.th_id);
+	free(rules.m_fork);
+	free(rules.fork);
+	return (1);
 }
 
-void ft_nb_meal(t_philo *philo)
+void	ft_nb_meal(t_philo *philo)
 {
-		philo->nb_meal --;
-		if (philo->nb_meal == 0)
-		{
-			pthread_mutex_lock(&philo->rules->m_one_die);
-			philo->rules->all_eat --;
-			pthread_mutex_unlock(&philo->rules->m_one_die);
-		}
-
+	philo->nb_meal --;
+	if (philo->nb_meal == 0)
+	{
+		pthread_mutex_lock(&philo->rules->m_one_die);
+		philo->rules->all_eat --;
+		pthread_mutex_unlock(&philo->rules->m_one_die);
+	}
 }
