@@ -6,7 +6,7 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/20 16:31:24 by agouet            #+#    #+#             */
-/*   Updated: 2022/05/20 16:39:24 by agouet           ###   ########.fr       */
+/*   Updated: 2022/08/19 15:10:40 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 	one_die = philo->rules->one_die;
 	all_eat = philo->rules->all_eat;
 	pthread_mutex_unlock(&philo->rules->m_one_die);
-	
+
 
 	while (!one_die && all_eat != 0)
 	{
@@ -46,7 +46,7 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 			else
 			{
 				pthread_mutex_lock(&philo->rules->m_fork[right]);
-			
+
 				if(philo->rules->fork[right] == 1)
 				{
 					pthread_mutex_unlock(&philo->rules->m_fork[right]);
@@ -72,7 +72,7 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 			else
 			{
 				pthread_mutex_lock(&philo->rules->m_fork[left]);
-			
+
 				if(philo->rules->fork[left] == 1)
 				{
 					pthread_mutex_unlock(&philo->rules->m_fork[left]);
@@ -166,7 +166,7 @@ void	*reaper(void *arg)
 				return (NULL);
 			}
 		temp = temp->next;
-	
+
 		}
 		usleep(8 * 1000);
 	}
