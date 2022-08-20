@@ -15,9 +15,7 @@
 t_philo	*ft_lstnew(int content, t_rules *rules)
 {
 	t_philo	*new_elem;
-	int		size_mutex;
 
-	size_mutex = sizeof (pthread_mutex_t);
 	new_elem = (t_philo *) malloc (sizeof(t_philo) * 1);
 	if (!new_elem)
 		return (NULL);

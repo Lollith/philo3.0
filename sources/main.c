@@ -68,7 +68,7 @@ int	ft_check_digit( int ac, char **av)
 void	ft_input(t_rules *rules, char **argv)
 {
 	rules->nb_philo = ft_atoi(argv[1]);
-	rules->all_eat = rules->nb_philo;//////
+	rules->all_eat = rules->nb_philo;
 	rules->t_eat = ft_atoi(argv[3]);
 	rules->t_sleep = ft_atoi(argv[4]);
 	rules->t_die = ft_atoi(argv[2]);
@@ -78,12 +78,10 @@ void	ft_input(t_rules *rules, char **argv)
 		rules->nb_t_must_eat = -1;
 }
 
-void	finisher(t_philo *philo)
+int	finisher(t_philo *philo)
 {
 	int		i;
-	t_philo	*temp;
 
-	temp = philo;
 	i = 0;
 	while (i < philo->rules->nb_philo)
 	{
@@ -98,6 +96,7 @@ void	finisher(t_philo *philo)
 	free(philo->rules->fork);
 	ft_lstclear(&philo);
 	printf("Fin!\n");
+	return (1);
 }
 
 int	main(int argc, char **argv)
@@ -114,21 +113,14 @@ int	main(int argc, char **argv)
 	if (!ft_check_digit(argc, argv))
 		return (1);
 	if (!initiate(&rules))
-	{
-		ft_free(rules);
-		return (1);
-	}
+		return (ft_free(rules));
 	if (!list_philo(&rules, &philo))
 	{
-		ft_free(rules);
 		ft_lstclear(&philo);
-		return (1);
+		return (ft_free(rules));
 	}
 	if (!create_thread_p(&rules, philo))
-	{
-		finisher(philo);
-		return (1);
-	}
+		return (finisher(philo));
 	finisher(philo);
 	return (0);
 }

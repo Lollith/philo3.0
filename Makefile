@@ -16,8 +16,14 @@ NAME 		= philo
 
 SRCS_PATH	= ./sources/
 
-SRCS		= $(addprefix $(SRCS_PATH), main.c errors.c utils.c \
-			  	list_philo.c thread.c states.c time.c)
+SRCS		= $(addprefix $(SRCS_PATH), main.c \
+				errors.c \
+				utils.c \
+			  	list_philo.c \
+				thread.c \
+				states.c \
+				time.c \
+				reaper.c)
 
 OBJS		= $(SRCS:.c=.o)
 
