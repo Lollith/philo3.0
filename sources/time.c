@@ -6,7 +6,7 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/17 14:29:56 by agouet            #+#    #+#             */
-/*   Updated: 2022/08/20 16:44:29 by agouet           ###   ########.fr       */
+/*   Updated: 2022/08/20 17:44:45 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ int	create_thread_p(t_rules *rules, t_philo *philo)
 
 void	ft_wait_thread( t_rules *rules, pthread_t *id)
 {
-	int			i;
+	int		i;
 
 	i = 0;
 	while (i < rules->nb_philo)
