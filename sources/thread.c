@@ -6,27 +6,48 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/04/20 16:31:24 by agouet            #+#    #+#             */
-/*   Updated: 2022/08/20 14:42:51 by agouet           ###   ########.fr       */
+/*   Updated: 2022/08/20 16:43:14 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-// void	take_the_good_one(t_philo *philo, int side)
-// {
-// 	int	one_die;
-// 	one_die = philo->rules->one_die;
-// 	pthread_mutex_lock(&philo->rules->m_fork[side]);
-// 			if (philo->rules->fork[side] == 1)
-// 			{
-// 				pthread_mutex_unlock(&philo->rules->m_fork[side]);
-// 					pthread_mutex_unlock(&philo->rules->m_fork[left]);
-// 				pthread_mutex_lock(&philo->rules->m_one_die);
-// 				one_die = philo->rules->one_die;
-// 				pthread_mutex_unlock(&philo->rules->m_one_die);
-// 				continue ;
-// 			}
-// }
+void	take_the_good_one(t_philo *philo, int *one_die, int side, int other_side)
+{
+	pthread_mutex_lock(&philo->rules->m_fork[side]);
+	if (philo->rules->fork[side] == 1)
+	{
+		pthread_mutex_unlock(&philo->rules->m_fork[side]);
+		pthread_mutex_lock(&philo->rules->m_one_die);
+		*one_die = philo->rules->one_die;
+		pthread_mutex_unlock(&philo->rules->m_one_die);
+	}
+	else
+	{
+		pthread_mutex_lock(&philo->rules->m_fork[other_side]);
+		if (philo->rules->fork[other_side] == 1)
+		{
+			pthread_mutex_unlock(&philo->rules->m_fork[other_side]);
+			pthread_mutex_unlock(&philo->rules->m_fork[side]);
+			pthread_mutex_lock(&philo->rules->m_one_die);
+			*one_die = philo->rules->one_die;
+			pthread_mutex_unlock(&philo->rules->m_one_die);
+		}
+	}
+}
+
+void	check_impair_wait(t_philo *philo)
+{
+	int	t_ini ;
+
+	t_ini = get_time() - philo->rules->time_ini;
+	if (philo->rules->nb_philo % 2 != 0)
+	{
+		while (philo->t_take_fork > 1
+			&& t_ini < 2 * philo->rules->t_eat + 10 + philo->t_take_fork)
+			usleep (100);
+	}
+}
 
 int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 {
@@ -43,64 +64,17 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 	one_die = philo->rules->one_die;
 	all_eat = philo->rules->all_eat;
 	pthread_mutex_unlock(&philo->rules->m_one_die);
-
 	while (!one_die && all_eat != 0)
 	{
-		if (philo->rules->nb_philo % 2 != 0)
-		{
-		while (philo->t_take_fork > 1 && get_time() - philo->rules->time_ini < 2 * philo->rules->t_eat + 10 + philo->t_take_fork)
-			usleep (2000);
-		}
+		check_impair_wait(philo);
 		if (left < right)
-		{
-			pthread_mutex_lock(&philo->rules->m_fork[left]);
-			if (philo->rules->fork[left] == 1)
-			{
-				pthread_mutex_unlock(&philo->rules->m_fork[left]);
-				pthread_mutex_lock(&philo->rules->m_one_die);
-				one_die = philo->rules->one_die;
-				pthread_mutex_unlock(&philo->rules->m_one_die);
-				continue ;
-			}
-			else
-			{
-				pthread_mutex_lock(&philo->rules->m_fork[right]);
-				if (philo->rules->fork[right] == 1)
-				{
-					pthread_mutex_unlock(&philo->rules->m_fork[right]);
-					pthread_mutex_unlock(&philo->rules->m_fork[left]);
-					pthread_mutex_lock(&philo->rules->m_one_die);
-					one_die = philo->rules->one_die;
-					pthread_mutex_unlock(&philo->rules->m_one_die);
-					continue ;
-				}
-			}
-		}
+			take_the_good_one(philo, &one_die, left, right);
 		else
-		{
-			pthread_mutex_lock(&philo->rules->m_fork[right]);
-			if (philo->rules->fork[right] == 1)
-			{
-				pthread_mutex_unlock(&philo->rules->m_fork[right]);
-				pthread_mutex_lock(&philo->rules->m_one_die);
-				one_die = philo->rules->one_die;
-				pthread_mutex_unlock(&philo->rules->m_one_die);
-				continue ;
-			}
-			else
-			{
-				pthread_mutex_lock(&philo->rules->m_fork[left]);
-				if (philo->rules->fork[left] == 1)
-				{
-					pthread_mutex_unlock(&philo->rules->m_fork[left]);
-					pthread_mutex_unlock(&philo->rules->m_fork[right]);
-					pthread_mutex_lock(&philo->rules->m_one_die);
-					one_die = philo->rules->one_die;
-					pthread_mutex_unlock(&philo->rules->m_one_die);
-					continue ;
-				}
-			}
-		}
+			take_the_good_one(philo, &one_die, right, left);
+		 philo->rules->fork[left] = 1;
+		 philo->rules->fork[right] = 1;
+		pthread_mutex_unlock(&philo->rules->m_fork[left]);
+		pthread_mutex_unlock(&philo->rules->m_fork[right]);
 		ready_to_eat(philo, left, right, num);
 		return (SUCCESS);
 	}
@@ -109,10 +83,6 @@ int	check_fork_eat(int *pt_left, int *pt_right, int *pt_num, t_philo *philo)
 
 int	ready_to_eat(t_philo *philo, int left, int right, int num)
 {
-	philo->rules->fork[left] = 1;
-	philo->rules->fork[right] = 1;
-	pthread_mutex_unlock(&philo->rules->m_fork[left]);
-	pthread_mutex_unlock(&philo->rules->m_fork[right]);
 	if (taking_fork(&num, philo->rules, philo) == 0)
 		return (FAILURE);
 	if (eating(&num, philo->rules, philo) == 0)
@@ -155,5 +125,3 @@ void	*routine_philo(void *arg)
 	}
 	return (NULL);
 }
-
-
