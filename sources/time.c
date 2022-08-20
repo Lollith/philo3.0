@@ -6,14 +6,14 @@
 /*   By: agouet <agouet@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/05/17 14:29:56 by agouet            #+#    #+#             */
-/*   Updated: 2022/05/20 17:11:00 by agouet           ###   ########.fr       */
+/*   Updated: 2022/08/20 16:44:29 by agouet           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 long int	get_time(void)
-{	
+{
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
@@ -48,7 +48,7 @@ int	create_thread_p(t_rules *rules, t_philo *philo)
 	}
 	while (i < rules->nb_philo && temp)
 	{
-		if (pthread_create(&rules->th_id[2], NULL, &routine_philo, temp) != 0)
+		if (pthread_create(&rules->th_id[i], NULL, &routine_philo, temp) != 0)
 			return (msg_error("error pthread_create\n"));
 		temp = temp->next;
 		i++;
